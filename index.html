@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-      <script type="text/javascript" src="/rating.min.js"></script>
+      <script type="text/javascript" src="rating.min.js"></script>
     <title>
       Testing Performance
     </title>
@@ -10,10 +10,37 @@
     <div id="main">
 
     </div>
+
+    <button id="btnTimes">
+      Check Updates in 100ms
+    </button>
+    <button id="btnUpdate">
+      Check Time needed for 100 draws
+    </button>
     
     <script>
-      function f(){
-        let rating = new Rating(document.getElementbyId("main"),{
+      function Noftimes(){
+        let rating = new Rating(document.getElementById("main"), {
+          "rating": 4.5,
+          "stars": 5
+          });
+        var count= 1, startTime = ((new Date()).getTime() * 1), time = 0, colors = ['#ff0', '#f00', '#0f0', '#000'];
+        while (time < 100) {
+          rating.update({
+              "width": 400 + ((count * 100) % 400),
+              "height": 400 + ((count * 100) % 400),
+              "rating":(0.5+count)%5,
+              "stars": (( 5+count) % 10) + 1,
+              "nonratedFill": colors[count%4]
+          });
+          time = ((new Date()).getTime() * 1) - startTime;
+          count++;
+        }
+        console.log(count + ' tests in ' + time + 'ms');
+      }
+
+      function Draw100times(){
+        let rating = new Rating(document.getElementById("main"),{
           "rating": 4.5,
           "stars": 5
         }),
@@ -38,7 +65,10 @@
           }
         }
     }
-    window.onload=f;
+
+    document.getElementById(btn1).addEventListener("click",Noftimes);
+    document.getElementById(btn2).addEventListener("click",Draw100times);
+    
     </script>
   </body>
 </html>
