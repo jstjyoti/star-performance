@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <script type="text/javascript" src="/rating.min.js"></script>
+    <title>
+      Testing Performance
+    </title>
+  </head>
+  <body>
+    <div id="main">
+
+    </div>
+    
+    <script>
+      function f(){
+        let rating = new Rating(document.getElementbyId("main"),{
+          "rating": 4.5,
+          "stars": 5
+        }),
+        startTime, time = 0, colors = ['#ff0', '#f00', '#0f0', '#000'], calledDraw = 0;
+        rating.onPreDraw = function () {
+          startTime = ((new Date()).getTime() * 1);
+        }
+        rating.onDraw = function ()
+        {
+          calledDraw++;
+          time += ((new Date()).getTime() * 1) - startTime;
+          if (calledDraw < 100) {
+              rating.update({
+                  "width": 400 + ((calledDraw * 100) % 400),
+                  "height": 400 + ((calledDraw * 100) % 400),
+                  "rating": (((4.5 + calledDraw) % 10) + 1) % (((5 + calledDraw) % 10) + 1),
+                  "stars": ((5 + calledDraw) % 10) + 1,
+                  "ratedFill": colors[calledDraw % 4]
+              });
+          } else {
+              console.log('Draw done ' + calledDraw + 'time(s) in ' + time + 'ms')
+          }
+        }
+    }
+    window.onload=f;
+    </script>
+  </body>
+</html>
