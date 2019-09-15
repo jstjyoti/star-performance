@@ -20,6 +20,7 @@
     
     <script>
       function Noftimes(){
+        document.getElementById("main").innerHTML="";
         let rating = new Rating(document.getElementById("main"), {
           "rating": 4.5,
           "stars": 5
@@ -40,11 +41,12 @@
       }
 
       function Draw100times(){
+        document.getElementById("main").innerHTML="";
         let rating = new Rating(document.getElementById("main"),{
           "rating": 4.5,
           "stars": 5
         }),
-        startTime, time = 0, colors = ['#ff0', '#f00', '#0f0', '#ddd'], calledDraw = 0;
+        startTime, time = 0, colors = ['#ff0', '#f00', '#0f0', '#00f'], calledDraw = 0;
         rating.onPreDraw = function () {
           startTime = ((new Date()).getTime() * 1);
         }
@@ -58,13 +60,13 @@
                   "height": 400 + ((calledDraw * 100) % 400),
                   "rating": (((4.5 + calledDraw) % 10) + 1) % (((5 + calledDraw) % 10) + 1),
                   "stars": ((5 + calledDraw) % 10) + 1,
-                  "nonratedFill": colors[calledDraw % 4]
+                  "ratedFill": colors[calledDraw % 4]
               });
           } else {
               console.log('Draw done ' + calledDraw + 'time(s) in ' + time + 'ms')
           }
         }
-    }
+      }
 
     document.getElementById("btn1").addEventListener("click",Noftimes)
     document.getElementById("btn2").addEventListener("click",Draw100times);
