@@ -24,14 +24,14 @@
           "rating": 4.5,
           "stars": 5
           });
-        var count= 1, startTime = ((new Date()).getTime() * 1), time = 0, colors = ['#ff0', '#f00', '#0f0', '#000'];
+        var count= 1, startTime = ((new Date()).getTime() * 1), time = 0, colors = ['#ff0', '#f00', '#0f0', '#00f'];
         while (time < 100) {
           rating.update({
               "width": 400 + ((count * 100) % 400),
               "height": 400 + ((count * 100) % 400),
               "rating":(0.5+count)%5,
               "stars": (( 5+count) % 10) + 1,
-              "nonratedFill": colors[count%4]
+              "ratedFill": colors[count%4]
           });
           time = ((new Date()).getTime() * 1) - startTime;
           count++;
@@ -44,7 +44,7 @@
           "rating": 4.5,
           "stars": 5
         }),
-        startTime, time = 0, colors = ['#ff0', '#f00', '#0f0', '#000'], calledDraw = 0;
+        startTime, time = 0, colors = ['#ff0', '#f00', '#0f0', '#00f'], calledDraw = 0;
         rating.onPreDraw = function () {
           startTime = ((new Date()).getTime() * 1);
         }
@@ -66,8 +66,8 @@
         }
     }
 
-    document.getElementById(btn1).addEventListener("click",Noftimes)
-    document.getElementById(btn2).addEventListener("click",Draw100times);
+    document.getElementById("btn1").addEventListener("click",Noftimes)
+    document.getElementById("btn2").addEventListener("click",Draw100times);
     
     </script>
   </body>

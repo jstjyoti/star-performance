@@ -77,7 +77,7 @@ function _validateColor(color) {
             return false;
         }
     }
-    return true;
+    return color;
 }
 class Definition {
     constructor(svg) {
@@ -89,17 +89,18 @@ class Definition {
             this.strokeRated = new SVGElement("stop"),
             this.strokeNonRated = new SVGElement("stop");
 
-        this.linearGradient.appendDom(this.Rated);
-        this.linearGradient.appendDom(this.NonRated);
+        this.linearGradient.appendChild(this.Rated);
+        this.linearGradient.appendChild(this.NonRated);
 
-        this.strokeLinearGradient.appendDom(this.strokeRated);
-        this.strokeLinearGradient.appendDom(this.strokeNonRated);
+        this.strokeLinearGradient.appendChild(this.strokeRated);
+        this.strokeLinearGradient.appendChild(this.strokeNonRated);
 
-        this.defs.appendDom(this.linearGradient);
-        this.defs.appendDom(this.strokeLinearGradient);
+        this.defs.appendChild(this.linearGradient);
+        this.defs.appendChild(this.strokeLinearGradient);
         this._config = {};
         svg.addDefinition(this);
     }
+
     update(rating, ratedFill, nonratedFill, ratedStroke, nonratedStroke, direction, flow) {
         let ratingFraction = (rating - Math.floor(rating)).toFixed(2),
             _configsLG = {"x2": direction == 'row' ? "100%" : "0%","y2": direction == 'column' ? "100%" : "0%"};
@@ -149,30 +150,34 @@ class SVGElement {
         this._elem = document.createElementNS("http://www.w3.org/2000/svg", tag);
         this.attrs = {};
     }
+
     getDomsvg() {
         return this._elem;
     }
+
     removeDomsvg() {
-        this._elem.parentNode.removeDom(this._elem);
+        this._elem.parentNode.removeChild(this._elem);
     }
-    appendDom(Dom) {
-        if (Dom instanceof Node) {
-            this._elem.appendDom(Dom);
-        } else if (Dom instanceof SVGElement) {
-            this._elem.appendDom(Dom.getDomsvg());
+
+    appendChild(child) {
+        if (child instanceof Node) {
+            this._elem.appendChild(child);
+        } else if (child instanceof SVGElement) {
+            this._elem.appendChild(child.getDomsvg());
         } else {
-            console.error("Dom must be Node or SVGElement");
+            console.error("Child must be Node or SVGElement");
         }
     }
-    removeDom(Dom) {
-        if (Dom instanceof Node) {
-            this._elem.removeDom(Dom);
-        } else if (Dom instanceof SVGElement) {
-            this._elem.removeDom(Dom.getDomsvg());
+    removeChild(child) {
+        if (child instanceof Node) {
+            this._elem.removeChild(child);
+        } else if (child instanceof SVGElement) {
+            this._elem.removeChild(child.getDomsvg());
         } else {
-            console.error("Dom must be Node or SVGElement");
+            console.error("Child must be Node or SVGElement");
         }
     }
+
     setAttributes(attrs) {
         let hasChange = false;
         for (let attrName in attrs) {
@@ -189,29 +194,12 @@ class SVGContainer extends SVGElement {
     constructor(container, height, width) {
         super("svg");//calling constructor of svgElement
         this.getDomsvg().setAttribute("xmlns", "https://www.w3.org/2000/svg");
-        container.appendDom(this.getDomsvg());
+        container.appendChild(this.getDomsvg());
         this.setAttributes({ height, width });
         [height, width] = this.getSize();
         this.height = height;
         this.width = width;
     }
-
-    getSize() {
-        let rect = this.getDomsvg().getBoundingClientRect();
-        return [rect.height, rect.width]
-    }
-
-    getDefinition() {
-        return this._def;
-    }
-
-    addDefinition(def) {
-        if (def instanceof Definition) {
-            this.appendDom(def.defs);
-            this._def = def;
-        }
-    }
-
     update(height, width) {
         if (this.setAttributes({ height, width })) {
             this.height = height;
@@ -219,8 +207,21 @@ class SVGContainer extends SVGElement {
         }
         return [this.height, this.width]//like a rectangle
     }
+    getSize() {
+        let rect = this.getDomsvg().getBoundingClientRect();
+        return [rect.height, rect.width]
+    }
+    getDefinition() {
+        return this._def;
+    }
+    addDefinition(def) {
+        if (def instanceof Definition) {
+            this.appendChild(def.defs);
+            this._def = def;
+        }
+    }
 }
-export default class Rating {
+class Rating {
     constructor(container, attribs) {
         if (!(container instanceof HTMLElement)) {
             console.error(" Where to draw the class ...no html container found");
@@ -319,7 +320,7 @@ export default class Rating {
 
         if (attribs.height !== undefined) {
             currentVal = _checkSize(attribs.height);
-            if (currentVal && currentVal.value >= 20 && currentVal.value !== this._config.height) {
+            if (currentVal.value && currentVal.value >= 20 && currentVal.value !== this._config.height) {
                 this._config.height = currentVal.value;
                 calcSide = true;
             }
@@ -345,15 +346,15 @@ export default class Rating {
 
         if (attribs.padding !== undefined) {
             currentVal = _checkSize(attribs.padding);
-            if (currentVal && currentVal !== this._config.padding) {
-                padding = currentVal;
+            if (currentVal.value && currentVal.value !== this._config.padding) {
+                padding = currentVal.value;
             }
         }
 
         if (attribs.strokeWidth !== undefined) {
             currentVal = _checkSize(attribs.strokeWidth);
-            if (currentVal && currentVal !== this._config.strokeWidth) {
-                strokeWidth = currentVal;
+            if (currentVal.value && currentVal.value !== this._config.strokeWidth) {
+                strokeWidth = currentVal.value;
             }
         }
 
@@ -365,7 +366,8 @@ export default class Rating {
                 console.error('Incorrect rating value: ' + attribs.rating);
             }
         }
-        if (attribs.justifyContent != undefined) {
+
+        if(attribs.justifyContent != undefined) {
             if (['start', 'end', 'center', 'space-evenly'].includes(attribs.justifyContent) && attribs.justifyContent !== this._config.justifyContent) {
                 this._config.justifyContent = attribs.justifyContent;
             }
@@ -379,7 +381,7 @@ export default class Rating {
             currentVal = _validateColor(attribs.ratedFill);
             if (currentVal && currentVal !== this._config.ratedFill) {
                 this._config.ratedFill = currentVal;
-            } 
+            }
             else if (!currentVal) 
             {
                 console.error('Incorrect color for ratedFill: ' + attribs.ratedFill);
@@ -506,7 +508,9 @@ export default class Rating {
         this._internalConfig.requestedAnimationFrame = false;
         if (_isMethod(this.onPreDraw )) {
             this.onPreDraw();
-        } 
+        } else if (this.onDraw) {
+            console.error('onDraw must be a function');
+        }
         let i, j,
             rating = !this._config.rating && this._config.rating != 0 ? this._config.NofStars : this._config.rating,
             currentStars = this._elem.stars.length;
@@ -527,7 +531,7 @@ export default class Rating {
             if (i >= currentStars) {
                 let star = new SVGElement("path");
                 this._elem.stars.push(star);
-                this._elem.svg.appendDom(star);
+                this._elem.svg.appendChild(star);
             } else if (i >= this._config.NofStars) {
                 this._elem.stars.pop().removeDomsvg();
             }
