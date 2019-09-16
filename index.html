@@ -17,7 +17,6 @@
     <button id="btn2">
       Check Time needed for 100 draws
     </button>
-    
     <script>
       function Noftimes(){
         document.getElementById("main").innerHTML="";
@@ -30,7 +29,7 @@
           rating.update({
               "width": 400 + ((count * 100) % 400),
               "height": 400 + ((count * 100) % 400),
-              "rating":(0.5+count)%5,
+              "rating": (((4.5 + count) % 10) + 1) % (((5 + count) % 10) + 1),
               "stars": (( 5+count) % 10) + 1,
               "ratedFill": colors[count%4]
           });
