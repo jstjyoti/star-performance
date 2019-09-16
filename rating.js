@@ -1,4 +1,4 @@
-Definition._uniqueid=0;//for unique id update of each def
+var _uniqueid=0;//for unique id update of each def
 /**
     *this is only for checking whether rating is Fractional or not taking Number.
     *If rating is fractional then gradient is used 
@@ -165,7 +165,7 @@ class Definition {
         this.defs.appendChild(this.linearGradient);
         this.defs.appendChild(this.strokeLinearGradient);
         this._config = {};
-        this._defid=++Definition._uniqueid;
+        this._defid=++_uniqueid;
         svg.addDefinition(this);
 
     }
@@ -544,7 +544,7 @@ class Rating {
                 }
             }
         }
-        if (_isMethod(this.onDraw )) {
+        if (_isMethod(this.onDraw)) {
             this.onDraw();
         }//no check for if onDraw is not there or not a method...will be called once onDraw is there and Method only
         
