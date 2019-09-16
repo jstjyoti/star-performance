@@ -1,4 +1,4 @@
-var  _uniqueid=0;
+Definition._uniqueid=0;//for unique id update of each def
 /**
     *this is only for checking whether rating is Fractional or not taking Number.
     *If rating is fractional then gradient is used 
@@ -72,19 +72,18 @@ function _validateColor(color) {
     }
     return color;
 }
-
-class SVGElement {
-    constructor(tag) {
+class SVGElement{
+    constructor(tag){
         this._elem = document.createElementNS("http://www.w3.org/2000/svg", tag);
         this.attrs = {};
     }
-    getDomsvg() {
+    getDomsvg(){
+        //whenever any update to be done then this reference is checked
         return this._elem;
     }
-    removeDomsvg() {
-        this._elem.parentNode.removeChild(this._elem);
+    removeDomsvg(){
+        this._elem.container.removeChild(this._elem);
     }
-
     appendChild(child) {
         if (child instanceof Node) {
             this._elem.appendChild(child);
@@ -103,7 +102,6 @@ class SVGElement {
             console.error("Child must be Node or SVGElement");
         }
     }
-
     setAttributes(attrs) {
         let hasChange = false;
         for (let attrName in attrs) {
@@ -167,7 +165,7 @@ class Definition {
         this.defs.appendChild(this.linearGradient);
         this.defs.appendChild(this.strokeLinearGradient);
         this._config = {};
-        this._defid=++_uniqueid;
+        this._defid=++Definition._uniqueid;
         svg.addDefinition(this);
 
     }
@@ -218,7 +216,7 @@ class Definition {
 class Rating {
     constructor(container, attribs) {
         if (!(container instanceof HTMLElement)) {
-            console.error(" Where to draw the class ...no html container found");
+            console.error(" Where to draw the chart ...no html container found");
             return null;
         }
         this._elem = {};
@@ -240,7 +238,6 @@ class Rating {
         this._config.nonratedFill = "#00ffff";
         this._config.ratedStroke = "none";
         this._config.nonratedStroke = "none";
-        //usefull internally
         this._internalConfig.direction = 'row';
         this._internalConfig.startX=0;
         this._internalConfig.startY=0;
@@ -274,29 +271,31 @@ class Rating {
         initialSide = this._internalConfig.direction === 'row' ? this._config.width / this._config.NofStars : this._config.width;
             side = this._internalConfig.direction === 'column' ? this._config.height / this._config.NofStars : this._config.height;
             initialSide = side < initialSide ? side : initialSide;
-            if (strokeWidth !== undefined) {
-                if (strokeWidth < 0 || strokeWidth > 0.10 * initialSide) {
-                    console.error("Incorrect strokeWidth setting to default");
-                } else {
-                    this._config.strokeWidth = strokeWidth;
-                }
+        if (strokeWidth !== undefined) {
+            if (strokeWidth < 0 || strokeWidth > 0.10 * initialSide) {
+                console.error("Incorrect strokeWidth setting to default");
+            } 
+            else{
+                this._config.strokeWidth = strokeWidth;
             }
-            if (padding !== undefined) {
-                if (padding < 1 || padding > 0.10 * initialSide) {
-                    console.error("Incorrect padding setting to default");
-                } else {
-                    this._config.padding = 1;
-                }
+        }
+        if (padding !== undefined) {
+            if (padding < 1 || padding > 0.10 * initialSide) {
+                console.error("Incorrect padding setting to default");
+            } 
+            else {
+                this._config.padding = 1;
             }
-            side = initialSide - (this._config.padding * 2) - (this._config.strokeWidth * 2);
+        }
+        side = initialSide - (this._config.padding * 2) - (this._config.strokeWidth * 2);
 
-            if (side < 10) {
-                return false;
-            }
-            if (side !== this._internalConfig.side || initialSide !== this._internalConfig.initialSide) {
-                this._internalConfig.side = side;
-                this._internalConfig.initialSide = initialSide;
-            }
+        if (side < 10) {
+            return false;
+        }
+        if (side !== this._internalConfig.side || initialSide !== this._internalConfig.initialSide) {
+            this._internalConfig.side = side;
+            this._internalConfig.initialSide = initialSide;
+        }
     }
     _validateSet(attribs){
         let currentVal, calcSide, strokeWidth, padding;
@@ -311,7 +310,6 @@ class Rating {
                 this._internalConfig.flow = (attribs.orientation === 'left-to-right' || attribs.orientation === 'top-to-bottom') ? '' : 'reverse';
             }
         }
-
         if (attribs.height !== undefined) {
             currentVal = _checkSize(attribs.height);
             if (currentVal.value && currentVal.value >= 20 && currentVal.value !== this._config.height) {
@@ -319,7 +317,6 @@ class Rating {
                 calcSide = true;
             }
         }
-
         if (attribs.width !== undefined) {
             currentVal = _checkSize(attribs.width);
             if (currentVal.value && currentVal.value >= 20 && currentVal.value !== this._config.width) {
@@ -549,7 +546,7 @@ class Rating {
         }
         if (_isMethod(this.onDraw )) {
             this.onDraw();
-        } 
+        }//no check for if onDraw is not there or not a method...will be called once onDraw is there and Method only
         
         this._internalConfig.firstDraw = false;
     }
@@ -570,5 +567,6 @@ class Rating {
         if (_isMethod(this.onUpdate)) {
             this.onUpdate(this._config);
         }
+        //no check for if onUpdate is not there or not a method
     }
 }

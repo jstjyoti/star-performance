@@ -7,19 +7,18 @@
     </title>
   </head>
   <body>
-    <div id="main">
-
-    </div>
-
     <button id="btn1">
       Check Updates in 100ms
     </button>
     <button id="btn2">
       Check Time needed for 100 draws
     </button>
+    <div id="main">
+
+    </div>
     <script>
       function Noftimes(){
-        document.getElementById("main").innerHTML="";
+        //document.getElementById("main").innerHTML="";
         let rating = new Rating(document.getElementById("main"), {
           "rating": 4.5,
           "stars": 5
@@ -40,7 +39,7 @@
       }
 
       function Draw100times(){
-        document.getElementById("main").innerHTML="";
+        //document.getElementById("main").innerHTML="";
         let rating = new Rating(document.getElementById("main"),{
           "rating": 4.5,
           "stars": 5
