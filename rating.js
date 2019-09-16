@@ -82,7 +82,7 @@ class SVGElement{
         return this._elem;
     }
     removeDomsvg(){
-        this._elem.container.removeChild(this._elem);
+        this._elem.parentElement.removeChild(this._elem);
     }
     appendChild(child) {
         if (child instanceof Node) {
