@@ -1,2 +1,3 @@
 # star-performance
-A Star Rating Chart in SVG and DOM-modification and performance of a JavaScript Code
+A Star Rating Chart in SVG made in JavaScript.
+Code-Quality, Browser performance, size of file is optimised.
